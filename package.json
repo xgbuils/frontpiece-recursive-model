@@ -1,0 +1,35 @@
+{
+  "name": "frontpiece.recursive-model",
+  "version": "0.1.0",
+  "description": "extension of recursive frontpiece.model",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xgbuils/frontpiece-recursive-model"
+  },
+  "keywords": [
+    "frontend",
+    "model",
+    "validation",
+    "error",
+    "handler"
+  ],
+  "author": "Xavier Garcia Buils <xgbuils@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xgbuils/frontent-recursive-model/issues"
+  },
+  "homepage": "https://github.com/xgbuils/frontent-recursive-model",
+  "dependencies": {
+    "frontpiece.model": "^0.1.0"
+  },
+  "devDependencies": {
+    "backbone": "^1.1.2",
+    "gulp": "^3.8.11",
+    "gulp-mocha": "^2.0.1",
+    "should": "^6.0.1"
+  }
+}
