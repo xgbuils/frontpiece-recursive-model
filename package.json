@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/xgbuils/frontent-recursive-model",
   "dependencies": {
-    "frontpiece.model": "^0.2.0"
+    "frontpiece.model": "^0.3.1",
+    "is-object": "^1.0.1"
   },
   "devDependencies": {
     "backbone": "^1.1.2",

@@ -1,5 +1,6 @@
 var should = require('should')
 var RecursiveModel = require('../')
+var Model = require('frontpiece.model')
 
 describe('Frontpiece.RecursiveModel', function () {
     describe('if model has instances of Model attributes returns plain object with properties of model and deep models', function () {
@@ -33,5 +34,38 @@ describe('Frontpiece.RecursiveModel', function () {
             should(this.fancy.get('bub')).be.eql(undefined)
         })
     })
-        
+    describe('if model has instances of Model properties set attributes inside of model and deep models', function () {
+        beforeEach(function () {
+            var FancyModel = RecursiveModel.extend({
+                initialize: function () {
+                    var foo = new RecursiveModel({
+                        min: 1,
+                        max: 10
+                    })
+                    var bar = new RecursiveModel({
+                        min: 2,
+                        max: 8
+                    })
+                }
+            })
+            this.fancy = new FancyModel({
+                foo: new Model({
+                    fizz: 'buzz'
+                }),
+                bar: 'tolo'
+            })
+            this.fancy.set({
+                foo: {
+                    fizz: 'zzub'
+                },
+                bar: 'ca'
+            })
+        })
+        it('set object', function () {
+            this.fancy.get('foo').should.be.eql({fizz: 'zzub'})
+        })
+        it('set object', function () {
+            this.fancy.get('bar').should.be.eql('ca')
+        })
+    })
 })
