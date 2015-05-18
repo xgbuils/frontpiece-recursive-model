@@ -1,5 +1,6 @@
-var Model    = require('frontpiece.model')
-var isObject = require('is-object')
+var Model        = require('frontpiece.model')
+var objectAssign = require('object-assign')
+var isObject     = require('is-object')
 
 var ModelGet = Model.prototype.get
 var ModelSet = Model.prototype.set
@@ -9,37 +10,26 @@ var RecursiveModel = Model.extend({
         return _get(ModelGet.call(this, key))
     },
     set: function (attrs, options) {
-        _set(this, attrs)
+        for(var key in attrs) {
+            if        (attrs[key] instanceof Model) {
+                ModelSet.call(this, key, attrs[key], options)
+            } else if (isObject(attrs[key])) {
+                var target = ModelGet.call(this, key)
+                if (target instanceof Model) {
+                    target.set(attrs[key], options)
+                } else {
+                    ModelSet.call(this, key, attrs[key], options)
+                }
+            } else {
+                ModelSet.call(this, key, attrs[key], objectAssign({}, options, {silent: true}))
+            }
+        }
     }
 })
 
-var ModelGet = Model.prototype.get
-
-function _set(target, source) {
-    if (target instanceof Model) {
-        target = target.attributes
-    }
-    for (var key in source) {
-        var src = source[key]
-        var Obj = Object
-        if (src instanceof Model) {
-            Obj = src.constructor
-            src = src.attributes
-        }
-        if (isObject(src)) {
-            if (!isObject(target[key])) {
-                target[key] = new Obj()
-            }
-            _set(target[key], src)
-        } else {
-            target[key] = src
-        }
-    }
-}
-
 var _get = function (model) {
     var object = model instanceof Model ? ModelGet.call(model) : model
-    if (object && typeof object === 'object') {
+    if (isObject(object)) {
         var attrs = {}
         for (var key in object) {
             attrs[key] = _get(object[key])
