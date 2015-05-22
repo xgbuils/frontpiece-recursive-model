@@ -2,8 +2,9 @@ var Model        = require('frontpiece.model')
 var objectAssign = require('object-assign')
 var isObject     = require('is-object')
 
-var ModelGet = Model.prototype.get
-var ModelSet = Model.prototype.set
+var ModelProto = Model.prototype
+var ModelGet = ModelProto.get
+var ModelSet = ModelProto.set
 
 var RecursiveModel = Model.extend({
     get: function (key) {
@@ -12,47 +13,63 @@ var RecursiveModel = Model.extend({
     set: function (attrs, options) {
         var model = this
         model._errors || (model._errors = {})
+        if (!options.__break) {
+            optionsBreak = objectAssign({}, options, {__break: true})
+        } else {
+            optionsBreak = options
+        }
         Object.keys(attrs).forEach(function (key) {
             if        (attrs[key] instanceof Model) {
-                attrs[key].on('change', function (props) {
-                    var changes = []
-                    props.forEach(function (prop) {
-                        changes.push(key + '.' + prop)
-                        model.trigger('change:' + key + '.' + prop)
-                    })
-                    changes.push(key)
-                    model.trigger('change:' + key)
-                    model.trigger('change', changes)
-                })
                 attrs[key].on('invalid', function (o, error, type) {
                     model.validationError = model._errors[key] = error
-                    model.trigger('invalid:' + key, model, error)
-                    model.trigger('invalid', model, error, key)
                 })
                 attrs[key].on('valid', function (o, error, type) {
                     delete model._errors[key]
-                    model.trigger('invalid:' + key)
                     var keys = Object.keys(model._errors)
                     if (keys.length > 0) {
                         model.validationError = model._errors[keys[0]]
-                        model.trigger('invalid', model, model._errors[keys[0]], keys[0])
-                    } else {
-                        model.validationError = undefined
-                        model.trigger('valid', model, undefined, key)
                     }
                 })
-                ModelSet.call(model, key, attrs[key], options)
+                attrs[key]._parent = model
+                ModelSet.call(model, key, attrs[key], optionsBreak)
             } else if (isObject(attrs[key])) {
                 var target = ModelGet.call(model, key)
                 if (target instanceof Model) {
-                    target.set(attrs[key], options)
+                    target.set(attrs[key], optionsBreak)
                 } else {
-                    ModelSet.call(model, key, attrs[key], options)
+                    ModelSet.call(model, key, attrs[key], optionsBreak)
                 }
             } else {
-                ModelSet.call(model, key, attrs[key], objectAssign({}, options, {silent: true}))
+                ModelSet.call(model, key, attrs[key], objectAssign({}, optionsBreak, {silent: true}))
             }
         })
+    },
+    _validate: function (attrs, options) {
+        var keys = Object.keys(this._errors || {})
+        var error
+        if (keys.length > 0) {
+            error = this.validationError
+            this.trigger('invalid', this, error)
+        } else {
+            error = ModelProto._validate.call(this, attrs, options)
+        }
+
+        if (!options.__break) {
+            var parent = this._parent
+            if (parent) {
+                parent._validate(parent.get(), options)
+            }
+        }
+        return error
+    },
+    _change: function (attrs, options) {
+        ModelProto._change.call(this, attrs, options)
+        if (!options.__break) {
+            var parent = this
+            while (parent = parent._parent) {
+                parent.trigger('change')
+            }
+        }
     }
 })
 
