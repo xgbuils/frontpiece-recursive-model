@@ -1,7 +1,7 @@
 {
   "name": "frontpiece.recursive-model",
-  "version": "0.3.2",
-  "description": "extension of recursive frontpiece.model",
+  "version": "0.4.0",
+  "description": "extension of frontpiece.model that handles behaviour when there are models inside another model",
   "main": "index.js",
   "scripts": {
     "test": "gulp test"
