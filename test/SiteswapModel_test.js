@@ -540,3 +540,64 @@ describe('When is set invalid siteswap model and after set valid properties in s
         this.height.change.should.be.equal(1)
     })
 })
+
+describe('When is set invalid siteswap with valid submodels and is set invalid submodel', function () {
+    beforeEach(function () {
+        createModels.call(this, {
+            balls:  {min: 4, max: 4},
+            period: {min: 2, max: 3},
+            height: {min: 1, max: 4}
+        }, {silent: true})
+    })
+    // siteswap
+    it('does not trigger valid event on siteswap when is set invalid height model', function () {
+        this.model.height.set('min', 5)
+        this.siteswap.valid.should.be.equal(0)
+    })
+    it('triggers invalid event on siteswap when is set invalid height model', function () {
+        this.model.height.set('min', 5)
+        this.siteswap.invalid.should.be.equal(1)
+    })
+    it('validationError property in siteswap is truly when is set invalid height model', function () {
+        this.model.height.set('min', 5)
+        expect(this.model.siteswap.validationError).to.be.equal('invalid range: 5-4')
+    })
+    it('triggers change event on siteswap when is set properties in height model', function () {
+        this.model.height.set('min', 5)
+        this.siteswap.change.should.be.equal(1)
+    })
+    // balls
+    it('does not trigger valid event on balls model when is set invalid height model', function () {
+        this.model.height.set('min', 5)
+        this.balls.valid.should.be.equal(0)
+    })
+    it('does not trigger invalid event on balls model when is set invalid height model', function () {
+        this.model.height.set('min', 5)
+        this.balls.invalid.should.be.equal(0)
+    })
+    it('validationError property in balls model is undefined when is set invalid height model', function () {
+        this.model.height.set('min', 5)
+        expect(this.model.balls.validationError).to.be.equal(undefined)
+    })
+    it('does not trigger change event on balls model when is changed height model', function () {
+        this.model.height.set('min', 5)
+        this.balls.change.should.be.equal(0)
+    })
+    // height
+    it('does not trigger valid event on height model when is set invalid height model', function () {
+        this.model.height.set('min', 5)
+        this.height.valid.should.be.equal(0)
+    })
+    it('triggers invalid event on height model when is set invalid height model', function () {
+        this.model.height.set('min', 5)
+        this.height.invalid.should.be.equal(1)
+    })
+    it('validationError property in height model is undefined when is set invalid height model', function () {
+        this.model.height.set('min', 5)
+        expect(this.model.height.validationError).to.be.equal('invalid range: 5-4')
+    })
+    it('triggers change event on siteswap when is changed height model', function () {
+        this.model.height.set('min', 5)
+        this.height.change.should.be.equal(1)
+    })
+})
