@@ -51,7 +51,7 @@ var RecursiveModel = Model.extend({
             error = this.validationError
             this.trigger('invalid', this, error)
         } else {
-            error = ModelProto._validate.call(this, attrs, options)
+            error = ModelProto._validate.call(this, this.get(), options)
         }
 
         if (!options.__break) {

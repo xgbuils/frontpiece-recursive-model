@@ -7,3 +7,6 @@ describe('test Model inherited behaviour', function () {
 describe('RecursiveModel test', function () {
 	require('./RecursiveModel_test')
 })
+describe('SiteswapModel test', function () {
+	require('./SiteswapModel_test')
+})
