@@ -1,6 +1,6 @@
 {
   "name": "frontpiece.recursive-model",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "extension of frontpiece.model that handles behaviour when there are models inside another model",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/xgbuils/frontent-recursive-model",
   "dependencies": {
-    "frontpiece.model": "^0.5.5",
+    "frontpiece.model": "^0.5.6",
     "is-object": "^1.0.1",
     "object-assign": "^2.0.0"
   },
